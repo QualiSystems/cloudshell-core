@@ -1,0 +1,20 @@
+language: python
+python:
+- '2.7'
+
+before_install:
+- pip install -r requirements.txt
+- pip install -r test_requirements.txt
+
+install:
+    - python setup.py install
+
+script: nosetests
+
+deploy:
+  provider: pypi
+  on:
+    branch: develop
+  user: quali
+  password:
+    secure: kAt+Rjq0szS2auo+huYitRxKeUQynydtnCtsJA9vH4ObpWtYNUn+Pldv7fg4ZgxrfaiWthK07BCNEPAuqC722N2NiNasn6XJ4dnWtUHpNI6nbbMMzMPSHW6xOMk9rsyI8lwKEwzrP1T73qPVhEwP1VJEsfkQUEelptMxCzTkw8tNj7+VkWlVilQ+qu7/aaK8RclqTSl6z2M2g43pU0bTGSZOXIIguQQuXqF6nZFrplXNNlVYG+OnK2DFtLMJyI73YhZq61rWhcbDgj1BvAMMvTwmPLlEZxpdIis87NN744X+jiUVDTr4X/ynnsLhyjEMOTIf8ssw/HR4OqgRwyUDIGANQ6ljYt1E3VRWm4vRRLwlBujHhhzkWeW9Ns3PsqM6OE7Qdyo14/Z+2VuCF8Ju83hdsUFhKKuOiSQaY74+tDze7Gm8r3wNYaKHN4o9dWX0yuO2REAsr3MPauKqRrhKYhHvOHZKWQrphE2WiCYDlFmoe4T24IPziyERmcj3p5YzmUabOF1HDSrd3plWDfMlm7l04jQNt6SgVtLbNBVGfnCOIwN2zmLXnNUYiusdUnj8gdbjySKClMh20ooJx5GzICBXVE7C0y6fwKgbLSEsa6YhMaKRaPPPIo3aBjjYDOA1QwofGvdBBZz9tKSvKJsEnBcu6OEuvaMwBu2RcK4Z6aI=
