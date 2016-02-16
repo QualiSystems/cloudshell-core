@@ -29,32 +29,32 @@ DEFAULT_LEVEL = 'DEBUG'
 # DEFAULT_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'Logs')
 LOG_SECTION = 'Logging'
 
-def getSettings():
+def get_settings():
     config = {}
     # Level
-    log_level = QSConfigParser.getSetting(LOG_SECTION, 'LOG_LEVEL') or DEFAULT_LEVEL
+    log_level = QSConfigParser.get_setting(LOG_SECTION, 'LOG_LEVEL') or DEFAULT_LEVEL
     config['LOG_LEVEL'] = log_level
 
     # Log format
-    log_format = QSConfigParser.getSetting(LOG_SECTION, 'LOG_FORMAT') or DEFAULT_FORMAT
+    log_format = QSConfigParser.get_setting(LOG_SECTION, 'LOG_FORMAT') or DEFAULT_FORMAT
     config['FORMAT'] = log_format
 
     # log_path
-    log_path = QSConfigParser.getSetting(LOG_SECTION, 'LOG_PATH')
+    log_path = QSConfigParser.get_setting(LOG_SECTION, 'LOG_PATH')
     config['LOG_PATH'] = log_path
 
     # Time format
-    time_format = QSConfigParser.getSetting(LOG_SECTION, 'TIME_FORMAT') or DEFAULT_TIME_FORMAT
+    time_format = QSConfigParser.get_setting(LOG_SECTION, 'TIME_FORMAT') or DEFAULT_TIME_FORMAT
     config['TIME_FORMAT'] = time_format
 
     return config
 
 
 # return accessable log path or None
-def getAccessibleLogPath(reservation_id='Autoload', handler='default'):
+def get_accessible_log_path(reservation_id='Autoload', handler='default'):
 
     accessible_log_path = None
-    config = getSettings()
+    config = get_settings()
     if not config['LOG_PATH']:
         return None
 
@@ -83,7 +83,7 @@ def getAccessibleLogPath(reservation_id='Autoload', handler='default'):
             pass
     return accessible_log_path
 
-def logExecutionInfo(logger_hdlr, exec_info):
+def log_execution_info(logger_hdlr, exec_info):
     '''Log provided execution infomrmation into provided logger on 'INFO' level
     '''
     if not hasattr(logger_hdlr, 'info_logged'):
@@ -95,7 +95,7 @@ def logExecutionInfo(logger_hdlr, exec_info):
 
 
 
-def getQSLogger(name='QS', handler_name='Default', reservation_id='Autoload'):
+def get_qs_logger(name='QS', handler_name='Default', reservation_id='Autoload'):
     # check if logger created
     handler_name = re.sub(' ', '_', handler_name)
     logger_name = '%s.%s' % (name, handler_name)
@@ -112,14 +112,14 @@ def getQSLogger(name='QS', handler_name='Default', reservation_id='Autoload'):
     root_logger.reservation_id = reservation_id
 
     # configure new logger
-    config = getSettings()
+    config = get_settings()
     logger = logging.getLogger(logger_name)
     formatter = MultiLineFormatter(config['FORMAT'])
 
     if 'LOG_PATH' in os.environ:
         log_path = os.environ['LOG_PATH']
     else:
-        log_path = getAccessibleLogPath(reservation_id, handler_name)
+        log_path = get_accessible_log_path(reservation_id, handler_name)
 
     if log_path:
         # print("Logger log path: %s" % log_path)
@@ -145,7 +145,7 @@ def qs_time_this(func):
     '''
     @wraps(func)
     def wrapper(*args, **kwargs):
-        _logger = getQSLogger()
+        _logger = get_qs_logger()
         start = time.time()
         _logger.info("%s started" % func.__name__)
         result = func(*args, **kwargs)
@@ -154,7 +154,7 @@ def qs_time_this(func):
         return result
     return wrapper
 
-def getLogPath(logger=logging.getLogger()):
+def get_log_path(logger=logging.getLogger()):
     for hdlr in logger.handlers:
         if isinstance(hdlr, logging.FileHandler):
             return hdlr.baseFilename
@@ -199,12 +199,12 @@ class Loggable(object):
     LOG_FATAL = LOG_LEVELS['FATAL']
     LOG_DEBUG = LOG_LEVELS['DEBUG']
 
-    def setupLogger(self):
+    def setup_logger(self):
         '''Setup local logger instance
 
         :return:
         '''
-        self.logger = getQSLogger(self.__class__.__name__)
+        self.logger = get_qs_logger(self.__class__.__name__)
         self.logger.setLevel(self.LOG_LEVEL)
         # Logging methods aliases
         self.logDebug = self.logger.debug

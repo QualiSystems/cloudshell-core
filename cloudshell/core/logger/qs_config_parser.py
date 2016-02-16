@@ -16,17 +16,17 @@ class QSConfigParser:
             file_path = file_path[:index + 1]
 
         self._config_file = os.getenv('QS_CONFIG', file_path + DEFAULT_CONFIG_PATH)
-        self._readConfigFile()
-        self._createDict()
+        self._read_config_file()
+        self._create_dict()
 
-    def _readConfigFile(self):
+    def _read_config_file(self):
         try:
             # print('Reading config', self._config_file)
             self._config_parser.read(self._config_file)
         except:
             pass
 
-    def _createDict(self):
+    def _create_dict(self):
         # if QSConfigParser._configDict is None:
         config_dict = {}
         for section in self._config_parser.sections():
@@ -36,7 +36,7 @@ class QSConfigParser:
         QSConfigParser._configDict = config_dict
 
     @staticmethod
-    def getDict(dict_section=None):
+    def get_dict(dict_section=None):
         if QSConfigParser._configDict is None:
             QSConfigParser()
         if dict_section:
@@ -47,8 +47,8 @@ class QSConfigParser:
         return QSConfigParser._configDict
 
     @staticmethod
-    def getSetting(dict_section=None, dict_key=None):
-        settings_dict = QSConfigParser.getDict(dict_section)
+    def get_setting(dict_section=None, dict_key=None):
+        settings_dict = QSConfigParser.get_dict(dict_section)
         if settings_dict and dict_key.lower() in settings_dict.keys():
             return settings_dict[dict_key.lower()]
         return None

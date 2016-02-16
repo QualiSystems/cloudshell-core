@@ -1,0 +1,2 @@
+cloudshell-core
+cloudshell-shell-core
