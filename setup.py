@@ -12,14 +12,13 @@ with open('test_requirements.txt') as f_tests:
 
 setup(
     name='cloudshell-core',
-    url='https://github.com/QualiSystems/cloudshell-core',
+    url='http://www.qualisystems.com/',
     author='QualiSystems',
     author_email='info@qualisystems.com',
-    packages=['cloudshell-core'],
+    packages=find_packages(),
     install_requires=required,
-    test_suite='tests',
     tests_require=required_for_tests,
     version=version_from_file,
-    description='CloudShell Core Python package',
+    description='QualiSystems CloudShell Python Core Package',
     include_package_data = True
 )
