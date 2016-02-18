@@ -1,1 +1,0 @@
-# сloudshell-core
