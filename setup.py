@@ -11,15 +11,14 @@ with open('test_requirements.txt') as f_tests:
     required_for_tests = f_tests.read().splitlines()
 
 setup(
-    name='cloudshell-networking',
-    url='https://github.com/QualiSystems/cloudshell-networking',
+    name='cloudshell-core',
+    url='http://www.qualisystems.com/',
     author='QualiSystems',
     author_email='info@qualisystems.com',
-    packages=['cloudshell-networking'],
+    packages=find_packages(),
     install_requires=required,
-    test_suite='tests',
     tests_require=required_for_tests,
     version=version_from_file,
-    description='QualiSystems Python package',
+    description='QualiSystems CloudShell Python Core Package',
     include_package_data = True
 )
