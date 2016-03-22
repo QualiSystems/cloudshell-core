@@ -3,6 +3,7 @@ import sys
 import logging
 from datetime import datetime
 from logging import StreamHandler
+import threading
 
 import os
 import re
@@ -10,6 +11,7 @@ from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 import inject
 
+lock = threading.Lock()
 
 # Logging Levels
 LOG_LEVELS = {
@@ -27,6 +29,8 @@ DEFAULT_TIME_FORMAT = '%Y%m%d%H%M%S'
 DEFAULT_LEVEL = 'DEBUG'
 # DEFAULT_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'Logs')
 LOG_SECTION = 'Logging'
+
+LOGGER_CONTAINER = {}
 
 
 def get_settings():
@@ -100,43 +104,56 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
+@inject.params(context='context')
+def get_qs_logger(context=None):
+    if context and hasattr(context, 'reservation'):
+        reservation_id = context.reservation.reservation_id
+    else:
+        reservation_id = 'Autoload'
+
+    lock.acquire()
+    try:
+        if reservation_id in LOGGER_CONTAINER:
+            logger = LOGGER_CONTAINER[reservation_id]
+        else:
+            logger = create_logger()
+            LOGGER_CONTAINER[reservation_id] = logger
+    finally:
+        lock.release()
+    return logger
+
+
 @inject.params(context='context', handler_class='handler_class')
-def get_qs_logger(context, handler_class):
-    # check if logger created
+def create_logger(context=None, handler_class=None):
     if handler_class:
         name = handler_class.__name__
     else:
         name = 'Default'
 
-    if hasattr(context, 'resource'):
+    if context and hasattr(context, 'resource'):
         resource_name = context.resource.name
     else:
         resource_name = 'Default'
 
-    if hasattr(context, 'reservation'):
+    if context and hasattr(context, 'reservation'):
         reservation_id = context.reservation.reservation_id
     else:
         reservation_id = 'Autoload'
 
     resource_name = re.sub(' ', '_', resource_name)
     logger_name = '%s.%s' % (name, resource_name)
-    root_logger = logging.getLogger()
-    logger_dict = root_logger.manager.loggerDict
 
-    if hasattr(root_logger, 'reservation_id'):
-        if logger_name in logger_dict.keys() and root_logger.reservation_id == reservation_id:
-            return logging.getLogger(logger_name)
-
-    # if reservation_id is None:
-    #     reservation_id = 'Autoload'
-
-    root_logger.reservation_id = reservation_id
-
-    # configure new logger
     config = get_settings()
-    logger = logging.getLogger(logger_name)
-    formatter = MultiLineFormatter(config['FORMAT'])
 
+    if 'LOG_LEVEL' in os.environ:
+        log_level = os.environ['LOG_LEVEL']
+    elif config['LOG_LEVEL']:
+        log_level = config['LOG_LEVEL']
+    else:
+        log_level = DEFAULT_LEVEL
+
+    logger = logging.Logger(logger_name, log_level)
+    formatter = MultiLineFormatter(config['FORMAT'])
     log_path = get_accessible_log_path(reservation_id, resource_name)
 
     if log_path:
@@ -148,15 +165,6 @@ def get_qs_logger(context, handler_class):
 
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
-
-    if 'LOG_LEVEL' in os.environ:
-        log_level = os.environ['LOG_LEVEL']
-    elif config['LOG_LEVEL']:
-        log_level = config['LOG_LEVEL']
-    else:
-        log_level = DEFAULT_LEVEL
-
-    logger.setLevel(log_level)
 
     return logger
 
