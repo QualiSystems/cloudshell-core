@@ -1,4 +1,5 @@
 import ConfigParser
+
 import os
 
 DEFAULT_CONFIG_PATH = 'qs_config.ini'
@@ -10,12 +11,12 @@ class QSConfigParser:
     def __init__(self):
         self._config_parser = ConfigParser.RawConfigParser()
 
-        file_path = os.path.realpath(__file__)
-        index = file_path.rfind('\\')
-        if index != -1:
-            file_path = file_path[:index + 1]
+        file_path = os.path.dirname(__file__)
+        # index = file_path.rfind('\\')
+        # if index != -1:
+        #     file_path = file_path[:index + 1]
 
-        self._config_file = os.getenv('QS_CONFIG', file_path + DEFAULT_CONFIG_PATH)
+        self._config_file = os.getenv('QS_CONFIG', os.path.join(file_path, DEFAULT_CONFIG_PATH))
         self._read_config_file()
         self._create_dict()
 
