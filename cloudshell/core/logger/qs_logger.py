@@ -8,7 +8,6 @@ from logging import FileHandler
 from logging import StreamHandler
 
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
-
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 
 
