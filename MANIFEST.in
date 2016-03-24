@@ -1,2 +1,3 @@
-include *.txt
+include *.txt *.ini *.htm *.md
 global-include *.ini
+recursive-include cloudshell *.ini
