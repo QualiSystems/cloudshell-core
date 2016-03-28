@@ -10,6 +10,7 @@ import re
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 import inject
+from cloudshell.shell.core.context import AutoLoadCommandContext, ResourceCommandContext, ResourceRemoteCommandContext
 
 lock = threading.Lock()
 
@@ -105,48 +106,42 @@ def log_execution_info(logger_hdlr, exec_info):
 
 
 @inject.params(context='context')
-def get_qs_logger(context=None):
-    if context and hasattr(context, 'reservation'):
-        reservation_id = context.reservation.reservation_id
-    else:
+def get_qs_logger(logger_name='QS', context=None):
+
+    if isinstance(context, AutoLoadCommandContext):
         reservation_id = 'Autoload'
+        resource_name = 'Default'
+    elif isinstance(context, ResourceCommandContext):
+        reservation_id = context.reservation.reservation_id
+        resource_name = context.resource.name
+    elif isinstance(context, ResourceRemoteCommandContext):
+        reservation_id = context.remote_reservation.reservation_id
+        resource_name = context.resource.name
+    else:
+        raise Exception('get_qs_logger', 'Unsuppported command context provided')
 
     lock.acquire()
     try:
         if reservation_id in LOGGER_CONTAINER:
             logger = LOGGER_CONTAINER[reservation_id]
         else:
-            logger = create_logger()
+            logger = create_logger(logger_name, resource_name, reservation_id)
             LOGGER_CONTAINER[reservation_id] = logger
     finally:
         lock.release()
     return logger
 
 
-@inject.params(context='context', handler_class='handler_class')
-def create_logger(context=None, handler_class=None):
-    if handler_class:
-        name = handler_class.__name__
-    else:
-        name = 'Default'
-
-    if context and hasattr(context, 'resource'):
-        resource_name = context.resource.name
-    else:
-        resource_name = 'Default'
-
-    if context and hasattr(context, 'reservation'):
-        reservation_id = context.reservation.reservation_id
-    else:
-        reservation_id = 'Autoload'
+def create_logger(logger_name, resource_name, reservation_id):
 
     resource_name = re.sub(' ', '_', resource_name)
-    logger_name = '%s.%s' % (name, resource_name)
+    logger_name = '%s.%s' % (logger_name, resource_name)
 
     config = get_settings()
 
     if 'LOG_LEVEL' in os.environ:
         log_level = os.environ['LOG_LEVEL']
+        os.getenv()
     elif config['LOG_LEVEL']:
         log_level = config['LOG_LEVEL']
     else:
