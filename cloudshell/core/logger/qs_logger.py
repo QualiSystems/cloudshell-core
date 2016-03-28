@@ -105,20 +105,24 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
+def _is_instance_of(context, type_name):
+    return context.__class__.__name__ == type_name
+
+
 @inject.params(context='context')
 def get_qs_logger(logger_name='QS', context=None):
 
-    if isinstance(context, AutoLoadCommandContext):
+    if _is_instance_of(context, 'AutoLoadCommandContext'):
         reservation_id = 'Autoload'
         resource_name = 'Default'
-    elif isinstance(context, ResourceCommandContext):
+    elif _is_instance_of(context, 'ResourceCommandContext'):
         reservation_id = context.reservation.reservation_id
         resource_name = context.resource.name
-    elif isinstance(context, ResourceRemoteCommandContext):
+    elif _is_instance_of(context, 'ResourceRemoteCommandContext'):
         reservation_id = context.remote_reservation.reservation_id
-        resource_name = context.resource.name
+        resource_name = context.remote_endpoints[0].name
     else:
-        raise Exception('get_qs_logger', 'Unsuppported command context provided')
+        raise Exception('get_qs_logger', 'Unsuppported command context provided {0}'.format(context))
 
     lock.acquire()
     try:
