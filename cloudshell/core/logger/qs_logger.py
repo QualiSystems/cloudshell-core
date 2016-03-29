@@ -10,8 +10,6 @@ import re
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 
-lock = threading.Lock()
-
 # Logging Levels
 LOG_LEVELS = {
     'INFO': logging.INFO,
@@ -29,7 +27,9 @@ DEFAULT_LEVEL = 'DEBUG'
 # DEFAULT_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'Logs')
 LOG_SECTION = 'Logging'
 
-LOGGER_CONTAINER = {}
+_LOGGER_CONTAINER = {}
+_LOGGER_LOCK = threading.Lock()
+
 
 
 def get_settings():
@@ -104,15 +104,15 @@ def log_execution_info(logger_hdlr, exec_info):
 
 
 def get_qs_logger(reservation_id, logger_name='QS', resource_name='Generic Resource'):
-    lock.acquire()
+    _LOGGER_LOCK.acquire()
     try:
-        if reservation_id in LOGGER_CONTAINER:
-            logger = LOGGER_CONTAINER[reservation_id]
+        if reservation_id in _LOGGER_CONTAINER:
+            logger = _LOGGER_CONTAINER[reservation_id]
         else:
             logger = create_logger(reservation_id, logger_name, resource_name)
-            LOGGER_CONTAINER[reservation_id] = logger
+            _LOGGER_CONTAINER[reservation_id] = logger
     finally:
-        lock.release()
+        _LOGGER_LOCK.release()
 
     return logger
 
