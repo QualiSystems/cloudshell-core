@@ -9,8 +9,6 @@ import os
 import re
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
-import inject
-from cloudshell.shell.core.context import AutoLoadCommandContext, ResourceCommandContext, ResourceRemoteCommandContext
 
 lock = threading.Lock()
 
@@ -105,39 +103,21 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
-def _is_instance_of(context, type_name):
-    return context.__class__.__name__ == type_name
-
-
-@inject.params(context='context')
-def get_qs_logger(logger_name='QS', context=None):
-
-    if _is_instance_of(context, 'AutoLoadCommandContext'):
-        reservation_id = 'Autoload'
-        resource_name = 'Default'
-    elif _is_instance_of(context, 'ResourceCommandContext'):
-        reservation_id = context.reservation.reservation_id
-        resource_name = context.resource.name
-    elif _is_instance_of(context, 'ResourceRemoteCommandContext'):
-        reservation_id = context.remote_reservation.reservation_id
-        resource_name = context.remote_endpoints[0].name
-    else:
-        raise Exception('get_qs_logger', 'Unsuppported command context provided {0}'.format(context))
-
+def get_qs_logger(reservation_id, logger_name='QS', resource_name='Generic Resource'):
     lock.acquire()
     try:
         if reservation_id in LOGGER_CONTAINER:
             logger = LOGGER_CONTAINER[reservation_id]
         else:
-            logger = create_logger(logger_name, resource_name, reservation_id)
+            logger = create_logger(reservation_id, logger_name, resource_name)
             LOGGER_CONTAINER[reservation_id] = logger
     finally:
         lock.release()
+
     return logger
 
 
-def create_logger(logger_name, resource_name, reservation_id):
-
+def create_logger(reservation_id, logger_name, resource_name):
     resource_name = re.sub(' ', '_', resource_name)
     logger_name = '%s.%s' % (logger_name, resource_name)
 
@@ -145,7 +125,6 @@ def create_logger(logger_name, resource_name, reservation_id):
 
     if 'LOG_LEVEL' in os.environ:
         log_level = os.environ['LOG_LEVEL']
-        os.getenv()
     elif config['LOG_LEVEL']:
         log_level = config['LOG_LEVEL']
     else:
