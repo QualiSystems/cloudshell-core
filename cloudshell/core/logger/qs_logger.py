@@ -168,7 +168,7 @@ def _create_logger(log_group, log_category, log_file_prefix):
     if log_path:
         # print("Logger log path: %s" % log_path)
         hdlr = MultiProcessingLog(log_path, mode='a')
-        print 'Logger File Handler is: {0}'.format(hdlr.baseFilename)
+        #print 'Logger File Handler is: {0}'.format(hdlr.baseFilename)
     else:
         hdlr = StreamHandler(sys.stdout)
 

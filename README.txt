@@ -1,1 +1,1 @@
-CloudShell shell core package powered by QualiSystems
+CloudShell shell core package powered by Quali
