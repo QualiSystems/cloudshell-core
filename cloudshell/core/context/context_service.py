@@ -19,4 +19,3 @@ class ContextBasedService(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.context_ended(exc_type, exc_val, exc_tb)
-    
