@@ -3,7 +3,6 @@ python:
 - '2.7'
 
 before_install:
-    - pip install traceback2==1.4.0
     - pip install -r test_requirements.txt -extra-index-url https://testpypi.python.org/pypi
     - pip install coveralls
 
