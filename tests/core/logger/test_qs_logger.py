@@ -52,11 +52,11 @@ class TestQSLogger(TestCase):
     def test_02_get_accessible_log_path(self):
         """ Test suite for get_accessible_log_path method """
         path = qs_logger.get_accessible_log_path()
-        self.assertTrue(re.search(r"Logs\\Autoload\\default--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log", path))
+        self.assertTrue(re.search(r"Logs[\\/]Autoload[\\/]default--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log", path))
         self.assertTrue(os.path.dirname(path))
 
         path = qs_logger.get_accessible_log_path(qs_logger.get_accessible_log_path("reservation_id", "handler_name"))
-        self.assertTrue(re.search(r"Logs\\reservation_id\\handler_name--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log", path))
+        self.assertTrue(re.search(r"Logs[\\/]reservation_id[\\/]handler_name--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log", path))
         self.assertTrue(os.path.dirname(path))
 
         qs_logger.get_settings = cut_settings
