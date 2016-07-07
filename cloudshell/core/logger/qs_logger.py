@@ -32,7 +32,6 @@ _LOGGER_CONTAINER = {}
 _LOGGER_LOCK = threading.Lock()
 
 
-
 def get_settings():
     """Read configuration settings from config or use DEFAULTS
 
@@ -73,15 +72,15 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
 
     if 'LOG_PATH' in os.environ:
         log_path = os.environ['LOG_PATH']
-    elif config['LOG_PATH']:
+    elif 'LOG_PATH' in config:
         log_path = config['LOG_PATH']
     else:
         return None
 
-    curent_path = os.path.dirname(__file__)
+    current_path = os.path.dirname(__file__)
 
     if log_path.startswith('..'):
-        log_path = os.path.join(curent_path, log_path)
+        log_path = os.path.join(current_path, log_path)
 
     time_format = config['TIME_FORMAT'] or DEFAULT_TIME_FORMAT
 
@@ -227,6 +226,7 @@ def get_log_path(logger=logging.getLogger()):
             return hdlr.baseFilename
     return None
 
+
 def normalize_buffer(input_buffer):
     """Clear color from input_buffer and special characters
 
@@ -234,7 +234,12 @@ def normalize_buffer(input_buffer):
     :return: str
     """
 
-    color_pattern = re.compile('\[[0-9]+;{0,1}[0-9]+m|\[[0-9]+m|\b|' + chr(27))            # 27 - ESC character
+    # \033[1;32;40m
+    # \033[ - Escape code
+    # 1     - style
+    # 32    - text color
+    # 40    - Background colour
+    color_pattern = re.compile(r'\[(\d+;){0,2}?\d+m|\b|' + chr(27))  # 27 - ESC character
 
     result_buffer = ''
 
@@ -251,6 +256,7 @@ def normalize_buffer(input_buffer):
     result_buffer = result_buffer.replace('\r\n', '\n')
 
     return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', '', result_buffer)
+
 
 class MultiLineFormatter(logging.Formatter):
     """Log Formatter, Append log header to each line.
@@ -271,7 +277,7 @@ class MultiLineFormatter(logging.Formatter):
             return s
 
         try:
-            record.msg= normalize_buffer(record.msg)
+            record.msg = normalize_buffer(record.msg)
             s = logging.Formatter.format(self, record)
             header, footer = s.rsplit(record.message, self.MAX_SPLIT)
             s = s.replace('\n', '\n' + header)

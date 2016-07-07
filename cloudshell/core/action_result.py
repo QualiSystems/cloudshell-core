@@ -1,4 +1,3 @@
-
 class ActionResult(object):
 
     def __init__(self):
