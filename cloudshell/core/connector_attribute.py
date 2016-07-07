@@ -3,4 +3,3 @@ class ConnectorAttribute(object):
         self.type = ''
         self.attributeName = ''
         self.attributeValue = ''
-    

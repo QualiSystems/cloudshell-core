@@ -1,5 +1,7 @@
-import ConfigParser
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
+import ConfigParser
 import os
 
 DEFAULT_CONFIG_PATH = 'qs_config.ini'
@@ -12,9 +14,6 @@ class QSConfigParser:
         self._config_parser = ConfigParser.RawConfigParser()
 
         file_path = os.path.dirname(__file__)
-        # index = file_path.rfind('\\')
-        # if index != -1:
-        #     file_path = file_path[:index + 1]
 
         self._config_file = os.getenv('QS_CONFIG', os.path.join(file_path, DEFAULT_CONFIG_PATH))
         self._read_config_file()
@@ -28,7 +27,6 @@ class QSConfigParser:
             pass
 
     def _create_dict(self):
-        # if QSConfigParser._configDict is None:
         config_dict = {}
         for section in self._config_parser.sections():
             config_dict[section] = {}
@@ -41,7 +39,7 @@ class QSConfigParser:
         if QSConfigParser._configDict is None:
             QSConfigParser()
         if dict_section:
-            if dict_section in QSConfigParser._configDict.keys():
+            if dict_section in QSConfigParser._configDict:
                 return QSConfigParser._configDict[dict_section]
             else:
                 return None
@@ -50,6 +48,6 @@ class QSConfigParser:
     @staticmethod
     def get_setting(dict_section=None, dict_key=None):
         settings_dict = QSConfigParser.get_dict(dict_section)
-        if settings_dict and dict_key.lower() in settings_dict.keys():
+        if settings_dict and dict_key and dict_key.lower() in settings_dict:
             return settings_dict[dict_key.lower()]
         return None
