@@ -77,10 +77,8 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     else:
         return None
 
-    current_path = os.path.dirname(__file__)
-
     if log_path.startswith('..'):
-        log_path = os.path.join(current_path, log_path)
+        log_path = os.path.join(os.path.dirname(__file__), log_path)
 
     time_format = config['TIME_FORMAT'] or DEFAULT_TIME_FORMAT
 
