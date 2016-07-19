@@ -78,13 +78,13 @@ class TestQSLogger(TestCase):
         path = qs_logger.get_accessible_log_path()
         self.assertTrue(os.path.dirname(path))
 
-    def test_02_get_accessible_log_path(self):
+    def test_04_get_accessible_log_path(self):
         """ Test suite for get_accessible_log_path method """
 
         path = qs_logger.get_accessible_log_path(qs_logger.get_accessible_log_path("reservation_id", "handler_name"))
         self.assertTrue(re.search(r"Logs[\\/]reservation_id[\\/]handler_name--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log", path))
 
-    def test_02_get_accessible_log_path_log_path_setting_missing(self):
+    def test_05_get_accessible_log_path_log_path_setting_missing(self):
         """ Test suite for get_accessible_log_path method """
 
         if "LOG_PATH" in os.environ:
@@ -92,19 +92,19 @@ class TestQSLogger(TestCase):
         qs_logger.get_settings = cut_settings
         self.assertIsNone(qs_logger.get_accessible_log_path())
 
-    def test_03_get_qs_logger_full_settings_default_params(self):
+    def test_06_get_qs_logger_full_settings_default_params(self):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
         self.assertTrue(isinstance(qs_logger.get_qs_logger().handlers[0], MultiProcessingLog))
 
-    def test_03_get_qs_logger_full_settings(self):
+    def test_07_get_qs_logger_full_settings(self):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
         self.assertTrue(isinstance(qs_logger.get_qs_logger(log_group='test1').handlers[0], MultiProcessingLog))
 
-    def test_03_get_qs_logger_stream_handler(self):
+    def test_08_get_qs_logger_stream_handler(self):
         """ Test suite for get_qs_logger method """
 
         if "LOG_PATH" in os.environ:
@@ -112,7 +112,7 @@ class TestQSLogger(TestCase):
         qs_logger.get_settings = cut_settings
         self.assertTrue(isinstance(qs_logger.get_qs_logger(log_group='test2').handlers[0], logging.StreamHandler))
 
-    def test_03_get_qs_logger_container_filling(self):
+    def test_10_get_qs_logger_container_filling(self):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
@@ -126,24 +126,24 @@ class TestQSLogger(TestCase):
 
         self.assertEqual(sorted(qs_logger._LOGGER_CONTAINER.keys()), sorted(["Ungrouped", "test1", "test2"]))
 
-    def test_04_normalize_buffer_decolorize(self):
+    def test_11_normalize_buffer_decolorize(self):
         """ Test suite for normalize_buffer method """
         self.assertEqual(qs_logger.normalize_buffer("\033[1;32;40mGreenOnWhiteBack "
                                                     "\033[4;31mRedUnderscore "
                                                     "\033[93mYellow"), "GreenOnWhiteBack RedUnderscore Yellow")
 
-    def test_04_normalize_buffer_remove_hex_symbols(self):
+    def test_12_normalize_buffer_remove_hex_symbols(self):
         """ Test suite for normalize_buffer method """
         self.assertEqual(qs_logger.normalize_buffer("\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff"), "---")
 
-    def test_04_normalize_buffer_carriage_return_replacing(self):
+    def test_13_normalize_buffer_carriage_return_replacing(self):
         """ Test suite for normalize_buffer method """
         self.assertEqual(qs_logger.normalize_buffer("\r\n \n\r"), "\n \n\r")
 
-    def test_04_normalize_buffer_converts_tuple_to_string(self):
+    def test_14_normalize_buffer_converts_tuple_to_string(self):
         """ Test suite for normalize_buffer method """
         self.assertEqual(qs_logger.normalize_buffer(("test", "tuple")), "('test', 'tuple')")
 
-    def test_04_normalize_buffer_converts_dict_to_string(self):
+    def test_15_normalize_buffer_converts_dict_to_string(self):
         """ Test suite for normalize_buffer method """
         self.assertEqual(qs_logger.normalize_buffer({"test": "dict"}), "{'test': 'dict'}")
