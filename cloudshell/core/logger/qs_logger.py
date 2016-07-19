@@ -241,6 +241,9 @@ def normalize_buffer(input_buffer):
 
     result_buffer = ''
 
+    if not isinstance(input_buffer, basestring):
+        input_buffer = str(input_buffer)
+
     match_iter = color_pattern.finditer(input_buffer)
 
     current_index = 0
