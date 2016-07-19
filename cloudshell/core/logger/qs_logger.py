@@ -113,7 +113,7 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
-def get_qs_logger(log_group='Ungrouped', log_category ='QS', log_file_prefix='QS'):
+def get_qs_logger(log_group='Ungrouped', log_category='QS', log_file_prefix='QS'):
     """Create cloudshell specific singleton logger
 
     :param log_group: This folder will be grouped under this name. The default implementation of the group is a folder
@@ -240,6 +240,9 @@ def normalize_buffer(input_buffer):
     color_pattern = re.compile(r'\[(\d+;){0,2}?\d+m|\b|' + chr(27))  # 27 - ESC character
 
     result_buffer = ''
+
+    if not isinstance(input_buffer, basestring):
+        input_buffer = str(input_buffer)
 
     match_iter = color_pattern.finditer(input_buffer)
 
