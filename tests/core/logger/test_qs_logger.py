@@ -100,3 +100,7 @@ class TestQSLogger(TestCase):
                                                     "\033[93mYellow"), "GreenOnWhiteBack RedUnderscore Yellow")
         self.assertEqual(qs_logger.normalize_buffer("\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff"), "---")
         self.assertEqual(qs_logger.normalize_buffer("\r\n \n\r"), "\n \n\r")
+
+        self.assertEqual(qs_logger.normalize_buffer(("test", "tuple")), "('test', 'tuple')")
+        self.assertEqual(qs_logger.normalize_buffer({"test": "dict"}), "{'test': 'dict'}")
+        self.assertEqual(qs_logger.normalize_buffer(u"unicode text"), "unicode text")
