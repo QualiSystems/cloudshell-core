@@ -4,15 +4,13 @@ from cloudshell.core.context.context_service import ContextBasedService
 
 
 class ErrorHandlingContext(ContextBasedService):
-    def __init__(self, context, logger):
+    def __init__(self, logger):
         """
         Initializes an instance of ErrorHandlingContext
         Allows proper logging on exception
-        :param context: ResourceCommandContext
         :param logger: Logger
         :type logger: Logger
         """
-        self.context = context
         self.logger = logger
 
     def get_objects(self):
