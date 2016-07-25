@@ -25,6 +25,11 @@ cut_settings = MagicMock(return_value={'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
                                        'LOG_LEVEL': 'INFO',
                                        'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'})
 
+wrong_settings = MagicMock(return_value={'LOG_PATH': None,
+                                         'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
+                                         'LOG_LEVEL': 'INFO',
+                                         'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'})
+
 
 class TestQSLogger(TestCase):
     _LOGS_PATH = os.path.join(os.path.dirname(__file__), "../../Logs")
@@ -93,6 +98,14 @@ class TestQSLogger(TestCase):
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = cut_settings
+        self.assertIsNone(qs_logger.get_accessible_log_path())
+
+    def test_get_accessible_log_path_log_path_is_none(self):
+        """ Test suite for get_accessible_log_path method """
+
+        if "LOG_PATH" in os.environ:
+            del os.environ["LOG_PATH"]
+        qs_logger.get_settings = wrong_settings
         self.assertIsNone(qs_logger.get_accessible_log_path())
 
     def test_get_qs_logger_full_settings_default_params(self):
