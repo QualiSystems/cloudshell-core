@@ -1,9 +1,7 @@
 import traceback
 
-from cloudshell.core.context.context_service import ContextBasedService
 
-
-class ErrorHandlingContext(ContextBasedService):
+class ErrorHandlingContext(object):
     def __init__(self, logger):
         """
         Initializes an instance of ErrorHandlingContext
@@ -13,15 +11,7 @@ class ErrorHandlingContext(ContextBasedService):
         """
         self.logger = logger
 
-    def get_objects(self):
-        """
-        Returns context instance. Should not be called explicitly
-        :return:  ErrorHandlingContext
-        :rtype ErrorHandlingContext
-        """
-        return self
-
-    def context_started(self):
+    def __enter__(self):
         """
         Called upon block start. Should not be called explicitly
         :return:  ErrorHandlingContext
@@ -29,13 +19,13 @@ class ErrorHandlingContext(ContextBasedService):
         """
         return self
 
-    def context_ended(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         """
         Called upon block end. Should not be called explicitly
         In case of exception during the block execution logs the error with debug severity
         and allows the same exception to be thrown
-        :return:  ErrorHandlingContext
-        :rtype ErrorHandlingContext
+        :return: True means exception handles, otherwise false
+        :rtype: bool
         """
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
         self.logger.error('Error occurred: ' + ''.join(lines))
