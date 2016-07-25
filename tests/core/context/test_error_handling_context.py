@@ -5,7 +5,7 @@ from mock import Mock, MagicMock
 from cloudshell.core.context.error_handling_context import ErrorHandlingContext
 
 
-class TestLoggingSession(TestCase):
+class TestErrorHandlingContext(TestCase):
 
     def test_log_written_when_exception_occurs(self):
         logger = Mock()
