@@ -27,6 +27,8 @@ class ErrorHandlingContext(object):
         :return: True means exception handles, otherwise false
         :rtype: bool
         """
+        if not exc_value:
+            return True
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
         self.logger.error('Error occurred: ' + ''.join(lines))
         return False
