@@ -3,10 +3,19 @@ python:
 - '2.7'
 
 before_install:
-- pip install traceback2==1.4.0
-- pip install -r test_requirements.txt -i https://testpypi.python.org/pypi
+    - pip install -r test_requirements.txt -i https://testpypi.python.org/pypi
+    - pip install coveralls
 
 install:
+    - pip install -r requirements.txt -i https://testpypi.python.org/pypi
     - python setup.py install
 
-script: python setup.py sdist --format zip
+script:
+    - python tests/cloudshell_core_tests.py
+    - python setup.py develop
+    - python setup.py test
+    - python setup.py sdist --format zip
+    - pip install cloudshell-core -f dist
+
+after_success:
+    - coveralls
