@@ -72,7 +72,7 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
 
     if 'LOG_PATH' in os.environ:
         log_path = os.environ['LOG_PATH']
-    elif 'LOG_PATH' in config and config['LOG_PATH']:
+    elif 'LOG_PATH' in config:
         log_path = config['LOG_PATH']
     else:
         return None
@@ -113,7 +113,7 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
-def get_qs_logger(log_group='Ungrouped', log_category='QS', log_file_prefix='QS'):
+def get_qs_logger(log_group='Ungrouped', log_category ='QS', log_file_prefix='QS'):
     """Create cloudshell specific singleton logger
 
     :param log_group: This folder will be grouped under this name. The default implementation of the group is a folder
@@ -241,7 +241,8 @@ def normalize_buffer(input_buffer):
 
     result_buffer = ''
 
-    if not isinstance(input_buffer, basestring):
+    if type(input_buffer) is not str:
+        # print 'error input buffer is not str, it is: {0}'.format(type(input_buffer))
         input_buffer = str(input_buffer)
 
     match_iter = color_pattern.finditer(input_buffer)
@@ -285,7 +286,7 @@ class MultiLineFormatter(logging.Formatter):
         except Exception, e:
             print traceback.format_exc()
             print 'logger.format: Unexpected error: ' + str(e)
-            print 'record = {}<<<'.format(record.message)
+            print 'record = {}<<<'.format(traceback.format_exc())
         return s
 
 

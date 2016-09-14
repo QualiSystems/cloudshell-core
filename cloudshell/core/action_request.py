@@ -3,5 +3,5 @@ class ActionRequest(object):
         self.actionId = ''
         self.type = ''
         self.actionTarget = None
-        self.connectioId = ''
+        self.connectionId = ''
         self.connectionParams = []
