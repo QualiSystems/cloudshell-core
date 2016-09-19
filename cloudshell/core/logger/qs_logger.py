@@ -242,7 +242,6 @@ def normalize_buffer(input_buffer):
     result_buffer = ''
 
     if not isinstance(input_buffer, basestring):
-        # print 'error input buffer is not str, it is: {0}'.format(type(input_buffer))
         input_buffer = str(input_buffer)
 
     match_iter = color_pattern.finditer(input_buffer)
