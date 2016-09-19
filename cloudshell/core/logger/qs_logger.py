@@ -72,7 +72,7 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
 
     if 'LOG_PATH' in os.environ:
         log_path = os.environ['LOG_PATH']
-    elif 'LOG_PATH' in config:
+    elif 'LOG_PATH' in config and config['LOG_PATH']:
         log_path = config['LOG_PATH']
     else:
         return None
@@ -241,7 +241,7 @@ def normalize_buffer(input_buffer):
 
     result_buffer = ''
 
-    if type(input_buffer) is not str:
+    if not isinstance(input_buffer, basestring):
         # print 'error input buffer is not str, it is: {0}'.format(type(input_buffer))
         input_buffer = str(input_buffer)
 
