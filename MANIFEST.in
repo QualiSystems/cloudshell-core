@@ -1,2 +1,3 @@
 include *.txt
-global-include *.ini, *.txt
+global-include *.ini
+global-include *.txt
