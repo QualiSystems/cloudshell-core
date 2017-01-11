@@ -113,7 +113,7 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
-def get_qs_logger(log_group='Ungrouped', log_category='QS', log_file_prefix='QS'):
+def get_qs_logger(log_group='Ungrouped', log_category ='QS', log_file_prefix='QS'):
     """Create cloudshell specific singleton logger
 
     :param log_group: This folder will be grouped under this name. The default implementation of the group is a folder
@@ -285,7 +285,7 @@ class MultiLineFormatter(logging.Formatter):
         except Exception, e:
             print traceback.format_exc()
             print 'logger.format: Unexpected error: ' + str(e)
-            print 'record = {}<<<'.format(record.message)
+            print 'record = {}<<<'.format(traceback.format_exc())
         return s
 
 

@@ -11,10 +11,10 @@ install:
     - python setup.py install
 
 script:
-    - python tests/cloudshell_core_tests.py
     - python setup.py develop
     - python setup.py test
     - python setup.py sdist --format zip
+    - nosetests --with-coverage --cover-package=cloudshell
     - pip install cloudshell-core -f dist
 
 after_success:
