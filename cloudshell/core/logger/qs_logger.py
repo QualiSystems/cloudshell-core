@@ -24,7 +24,7 @@ LOG_LEVELS = {
 # default settings
 DEFAULT_FORMAT = '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'
 DEFAULT_TIME_FORMAT = '%Y%m%d%H%M%S'
-DEFAULT_LEVEL = 'DEBUG'
+DEFAULT_LEVEL = 'INFO'
 # DEFAULT_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'Logs')
 LOG_SECTION = 'Logging'
 
