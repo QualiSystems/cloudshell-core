@@ -27,6 +27,7 @@ DEFAULT_TIME_FORMAT = '%Y%m%d%H%M%S'
 DEFAULT_LEVEL = 'INFO'
 # DEFAULT_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'Logs')
 LOG_SECTION = 'Logging'
+WINDOWS_OS_FAMILY = "nt"
 
 _LOGGER_CONTAINER = {}
 _LOGGER_LOCK = threading.Lock()
@@ -47,15 +48,36 @@ def get_settings():
     log_format = QSConfigParser.get_setting(LOG_SECTION, 'LOG_FORMAT') or DEFAULT_FORMAT
     config['FORMAT'] = log_format
 
-    # log_path
-    log_path = QSConfigParser.get_setting(LOG_SECTION, 'LOG_PATH')
-    config['LOG_PATH'] = log_path
+    # UNIX log path
+    config['UNIX_LOG_PATH'] = QSConfigParser.get_setting(LOG_SECTION, 'UNIX_LOG_PATH')
+
+    # Windows log path
+    config['WINDOWS_LOG_PATH'] = QSConfigParser.get_setting(LOG_SECTION, 'WINDOWS_LOG_PATH')
 
     # Time format
     time_format = QSConfigParser.get_setting(LOG_SECTION, 'TIME_FORMAT') or DEFAULT_TIME_FORMAT
     config['TIME_FORMAT'] = time_format
 
     return config
+
+
+def _get_log_path(config):
+    """Get log path based on the environment variable or Windows/Unix config setting
+
+    :param dict[str] config:
+    :rtype: str
+    """
+    if 'LOG_PATH' in os.environ:
+        return os.environ['LOG_PATH']
+
+    if os.name == WINDOWS_OS_FAMILY:
+        tpl = config.get('WINDOWS_LOG_PATH')
+        try:
+            return tpl.format(**os.environ)
+        except KeyError:
+            print "Environment variable is not defined in the template {}".format(tpl)
+    else:
+        return config.get('UNIX_LOG_PATH')
 
 
 # return accessable log path or None
@@ -66,15 +88,12 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     :param handler: handler name for logger
     :return: generated log path
     """
-
     accessible_log_path = None
     config = get_settings()
 
-    if 'LOG_PATH' in os.environ:
-        log_path = os.environ['LOG_PATH']
-    elif 'LOG_PATH' in config and config['LOG_PATH']:
-        log_path = config['LOG_PATH']
-    else:
+    log_path = _get_log_path(config)
+
+    if not log_path:
         return None
 
     if log_path.startswith('..'):

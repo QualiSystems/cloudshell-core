@@ -10,6 +10,7 @@ import re
 import shutil
 
 from mock import MagicMock
+import mock
 from unittest import TestCase
 
 from cloudshell.core.logger import qs_logger
@@ -66,12 +67,47 @@ class TestQSLogger(TestCase):
 
     def test_get_settings(self):
         """ Test suite for get_settings method """
-        exp_response = {'LOG_PATH': '../../Logs',
+        exp_response = {'WINDOWS_LOG_PATH': r'{APPDATA}\..\qualisystems\logs\commands',
+                        'UNIX_LOG_PATH': '/var/logs/qualisystems',
                         'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
                         'LOG_LEVEL': 'INFO',
                         'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'}
 
         self.assertEqual(qs_logger.get_settings(), exp_response)
+
+    @mock.patch("cloudshell.core.logger.qs_logger.os")
+    def test_get_log_path_from_environment_variable(self, os):
+        """Check that method will primarily return log path from the environment variable if such exists"""
+        config = {}
+        expected_path = MagicMock()
+        os.environ = {'LOG_PATH': expected_path}
+        # act
+        result = qs_logger._get_log_path(config=config)
+        # verify
+        self.assertEqual(result, expected_path)
+
+    @mock.patch("cloudshell.core.logger.qs_logger.os")
+    def test_get_log_path_for_windows_os(self, os):
+        """Check that method will return windows log path setting with substituted environment variables"""
+        os.name = qs_logger.WINDOWS_OS_FAMILY
+        os.environ = {"SOME_EN_VARIABLE": "C:\\some_path"}
+        expected_path = "{SOME_EN_VARIABLE}\\qualisystems\\logs\\commands"
+        config = {"WINDOWS_LOG_PATH": expected_path}
+        # act
+        result = qs_logger._get_log_path(config=config)
+        # verify
+        self.assertEqual(result, "C:\\some_path\\qualisystems\\logs\\commands")
+
+    @mock.patch("cloudshell.core.logger.qs_logger.os")
+    def test_get_log_path_for_unix_os(self, os):
+        """Check that method will return unix log path setting for posix OS"""
+        os.name = "posix"
+        expected_path = MagicMock()
+        config = {"UNIX_LOG_PATH": expected_path}
+        # act
+        result = qs_logger._get_log_path(config=config)
+        # verify
+        self.assertEqual(result, expected_path)
 
     def test_get_accessible_log_path_default_params(self):
         """ Test suite for get_accessible_log_path method """
