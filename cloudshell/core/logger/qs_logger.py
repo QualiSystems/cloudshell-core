@@ -54,6 +54,9 @@ def get_settings():
     # Windows log path
     config['WINDOWS_LOG_PATH'] = QSConfigParser.get_setting(LOG_SECTION, 'WINDOWS_LOG_PATH')
 
+    # Default log path for all systems
+    config['DEFAULT_LOG_PATH'] = QSConfigParser.get_setting(LOG_SECTION, 'DEFAULT_LOG_PATH')
+
     # Time format
     time_format = QSConfigParser.get_setting(LOG_SECTION, 'TIME_FORMAT') or DEFAULT_TIME_FORMAT
     config['TIME_FORMAT'] = time_format
@@ -61,7 +64,7 @@ def get_settings():
     return config
 
 
-def _get_log_path(config):
+def _get_log_path_config(config):
     """Get log path based on the environment variable or Windows/Unix config setting
 
     :param dict[str] config:
@@ -71,13 +74,40 @@ def _get_log_path(config):
         return os.environ['LOG_PATH']
 
     if os.name == WINDOWS_OS_FAMILY:
-        tpl = config.get('WINDOWS_LOG_PATH')
-        try:
-            return tpl.format(**os.environ)
-        except KeyError:
-            print "Environment variable is not defined in the template {}".format(tpl)
+        if 'WINDOWS_LOG_PATH' in config:
+            tpl = config['WINDOWS_LOG_PATH']
+            try:
+                return tpl.format(**os.environ)
+            except KeyError:
+                print "Environment variable is not defined in the template {}".format(tpl)
     else:
         return config.get('UNIX_LOG_PATH')
+
+
+def _prepare_log_path(log_path, reservation_id, log_file_name):
+    """Create logs directory if needed and return full path to the log file
+
+    :param str log_path:
+    :param str reservation_id:
+    :param str log_file_name:
+    :rtype: str
+    """
+    if log_path.startswith('..'):
+        log_path = os.path.join(os.path.dirname(__file__), log_path)
+
+    log_path = os.path.join(log_path, reservation_id)
+    log_file = os.path.join(log_path, log_file_name)
+    # print(log_file)
+
+    if os.path.isdir(log_path):
+        if os.access(log_path, os.W_OK):
+            return log_file
+    else:
+        try:
+            os.makedirs(log_path)
+            return log_file
+        except:
+            pass
 
 
 # return accessable log path or None
@@ -88,36 +118,25 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     :param handler: handler name for logger
     :return: generated log path
     """
-    accessible_log_path = None
     config = get_settings()
-
-    log_path = _get_log_path(config)
-
-    if not log_path:
-        return None
-
-    if log_path.startswith('..'):
-        log_path = os.path.join(os.path.dirname(__file__), log_path)
-
     time_format = config['TIME_FORMAT'] or DEFAULT_TIME_FORMAT
-
     log_file_name = '{0}--{1}.log'.format(handler, datetime.now().strftime(time_format))
-    log_path = os.path.join(log_path, reservation_id)
 
-    log_file = os.path.join(log_path, log_file_name)
-    # print(log_file)
+    log_path = _get_log_path_config(config)
 
-    if os.path.isdir(log_path):
-        if os.access(log_path, os.W_OK):
-            accessible_log_path = log_file
-    else:
-        try:
-            os.makedirs(log_path)
-            accessible_log_path = log_file
-        except:
-            pass
+    if log_path:
+        path = _prepare_log_path(log_path=log_path,
+                                 reservation_id=reservation_id,
+                                 log_file_name=log_file_name)
+        if path:
+            return path
 
-    return accessible_log_path
+    default_log_path = config.get('DEFAULT_LOG_PATH')
+
+    if default_log_path:
+        return _prepare_log_path(log_path=default_log_path,
+                                 reservation_id=reservation_id,
+                                 log_file_name=log_file_name)
 
 
 def log_execution_info(logger_hdlr, exec_info):

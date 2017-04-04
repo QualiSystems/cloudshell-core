@@ -16,6 +16,7 @@ class TestQSConfigParser(TestCase):
                     {'time_format': '%d-%b-%Y--%H-%M-%S',
                      'windows_log_path': r'{APPDATA}\..\qualisystems\logs\commands',
                      'unix_log_path': '/var/logs/qualisystems',
+                     'default_log_path': '../../Logs',
                      'log_format': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s',
                      'log_level': 'INFO'}}
 
