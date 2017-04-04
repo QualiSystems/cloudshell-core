@@ -84,18 +84,16 @@ def _get_log_path_config(config):
         return config.get('UNIX_LOG_PATH')
 
 
-def _prepare_log_path(log_path, reservation_id, log_file_name):
+def _prepare_log_path(log_path, log_file_name):
     """Create logs directory if needed and return full path to the log file
 
     :param str log_path:
-    :param str reservation_id:
     :param str log_file_name:
     :rtype: str
     """
     if log_path.startswith('..'):
         log_path = os.path.join(os.path.dirname(__file__), log_path)
 
-    log_path = os.path.join(log_path, reservation_id)
     log_file = os.path.join(log_path, log_file_name)
     # print(log_file)
 
@@ -125,8 +123,10 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     log_path = _get_log_path_config(config)
 
     if log_path:
+        env_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", "..")
+        shell_name = os.path.basename(os.path.abspath(env_folder))
+        log_path = os.path.join(log_path, reservation_id, shell_name)
         path = _prepare_log_path(log_path=log_path,
-                                 reservation_id=reservation_id,
                                  log_file_name=log_file_name)
         if path:
             return path
@@ -134,8 +134,8 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     default_log_path = config.get('DEFAULT_LOG_PATH')
 
     if default_log_path:
+        default_log_path = os.path.join(log_path, reservation_id)
         return _prepare_log_path(log_path=default_log_path,
-                                 reservation_id=reservation_id,
                                  log_file_name=log_file_name)
 
 

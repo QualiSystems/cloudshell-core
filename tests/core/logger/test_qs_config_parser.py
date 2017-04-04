@@ -14,7 +14,7 @@ CUR_DIR = os.path.dirname(__file__)
 class TestQSConfigParser(TestCase):
     exp_response = {'Logging':
                     {'time_format': '%d-%b-%Y--%H-%M-%S',
-                     'windows_log_path': r'{APPDATA}\..\qualisystems\logs\commands',
+                     'windows_log_path': r'{ALLUSERSPROFILE}\QualiSystems\logs',
                      'unix_log_path': '/var/logs/qualisystems',
                      'default_log_path': '../../Logs',
                      'log_format': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s',
