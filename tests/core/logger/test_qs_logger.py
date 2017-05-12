@@ -68,7 +68,7 @@ class TestQSLogger(TestCase):
     def test_get_settings(self):
         """ Test suite for get_settings method """
         exp_response = {'WINDOWS_LOG_PATH': r'{ALLUSERSPROFILE}\QualiSystems\logs',
-                        'UNIX_LOG_PATH': '/var/logs/qualisystems',
+                        'UNIX_LOG_PATH': '/var/log/qualisystems',
                         'DEFAULT_LOG_PATH': '../../Logs',
                         'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
                         'LOG_LEVEL': 'INFO',
