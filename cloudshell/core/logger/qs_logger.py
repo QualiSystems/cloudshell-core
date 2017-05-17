@@ -74,8 +74,8 @@ def _get_log_path_config(config):
         return os.environ['LOG_PATH']
 
     if os.name == WINDOWS_OS_FAMILY:
-        if 'WINDOWS_LOG_PATH' in config:
-            tpl = config['WINDOWS_LOG_PATH']
+        tpl = config.get('WINDOWS_LOG_PATH')
+        if tpl:
             try:
                 return tpl.format(**os.environ)
             except KeyError:
@@ -134,7 +134,7 @@ def get_accessible_log_path(reservation_id='Autoload', handler='default'):
     default_log_path = config.get('DEFAULT_LOG_PATH')
 
     if default_log_path:
-        default_log_path = os.path.join(log_path, reservation_id)
+        default_log_path = os.path.join(default_log_path, reservation_id)
         return _prepare_log_path(log_path=default_log_path,
                                  log_file_name=log_file_name)
 
@@ -151,7 +151,7 @@ def log_execution_info(logger_hdlr, exec_info):
         logger_hdlr.info('-----------------------------------------------------------\n')
 
 
-def get_qs_logger(log_group='Ungrouped', log_category ='QS', log_file_prefix='QS'):
+def get_qs_logger(log_group='Ungrouped', log_category='QS', log_file_prefix='QS'):
     """Create cloudshell specific singleton logger
 
     :param log_group: This folder will be grouped under this name. The default implementation of the group is a folder
