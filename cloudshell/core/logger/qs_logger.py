@@ -128,8 +128,8 @@ def _prepare_log_path(log_path, log_file_name):
 
 
 def log_execution_info(logger_hdlr, exec_info):
-    '''Log provided execution infomrmation into provided logger on 'INFO' level
-    '''
+    """Log provided execution infomrmation into provided logger on 'INFO' level
+    """
     if not hasattr(logger_hdlr, 'info_logged'):
         logger_hdlr.info_logged = True
         logger_hdlr.info('--------------- Execution Info: ---------------------------')
@@ -217,9 +217,9 @@ from functools import wraps
 
 
 def qs_time_this(func):
-    '''
+    """
     Decorator that reports the execution time.
-    '''
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -249,11 +249,11 @@ class MultiLineFormatter(logging.Formatter):
     MAX_SPLIT = 1
 
     def format(self, record):
-        '''formatting for one or multi-line message
+        """formatting for one or multi-line message
 
         :param record:
         :return:
-        '''
+        """
         s = ''
 
         if record.msg == '':
@@ -280,10 +280,10 @@ class Loggable(object):
     LOG_DEBUG = LOG_LEVELS['DEBUG']
 
     def setup_logger(self):
-        '''Setup local logger instance
+        """Setup local logger instance
 
         :return:
-        '''
+        """
         self.logger = get_qs_logger(self.__class__.__name__)
         self.logger.setLevel(self.LOG_LEVEL)
         # Logging methods aliases
