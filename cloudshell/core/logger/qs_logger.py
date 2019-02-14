@@ -5,7 +5,6 @@ from datetime import datetime
 from logging import StreamHandler
 import threading
 import traceback
-from builtins import str
 
 import os
 import re
