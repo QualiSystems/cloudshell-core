@@ -1,10 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import ConfigParser
 import os
+import sys
 
 DEFAULT_CONFIG_PATH = 'qs_config.ini'
+
+if (sys.version_info >= (3,0)):
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 
 class QSConfigParser:
