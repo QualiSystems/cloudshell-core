@@ -8,10 +8,16 @@ import logging
 import os
 import re
 import shutil
+import sys
 
-from mock import MagicMock
-import mock
-from unittest import TestCase
+if (sys.version_info >= (3,0)):
+    from unittest.mock import MagicMock
+    from unittest import TestCase, mock
+else:
+    from mock import MagicMock
+    import mock
+    from unittest import TestCase
+
 
 from cloudshell.core.logger import qs_logger
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog

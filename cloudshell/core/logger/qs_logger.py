@@ -79,7 +79,7 @@ def _get_log_path_config(config):
             try:
                 return tpl.format(**os.environ)
             except KeyError:
-                print "Environment variable is not defined in the template {}".format(tpl)
+                print ("Environment variable is not defined in the template {}".format(tpl))
     else:
         return config.get('UNIX_LOG_PATH')
 
@@ -279,7 +279,7 @@ def normalize_buffer(input_buffer):
 
     result_buffer = ''
 
-    if not isinstance(input_buffer, basestring):
+    if not isinstance(input_buffer, str):
         input_buffer = str(input_buffer)
 
     match_iter = color_pattern.finditer(input_buffer)
@@ -320,10 +320,10 @@ class MultiLineFormatter(logging.Formatter):
             s = logging.Formatter.format(self, record)
             header, footer = s.rsplit(record.message, self.MAX_SPLIT)
             s = s.replace('\n', '\n' + header)
-        except Exception, e:
-            print traceback.format_exc()
-            print 'logger.format: Unexpected error: ' + str(e)
-            print 'record = {}<<<'.format(traceback.format_exc())
+        except Exception as e:
+            print (traceback.format_exc())
+            print ('logger.format: Unexpected error: ' + str(e))
+            print ('record = {}<<<'.format(traceback.format_exc()))
         return s
 
 
