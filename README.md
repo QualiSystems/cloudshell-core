@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/QualiSystems/cloudshell-core/badge.svg?branch=dev)](https://coveralls.io/github/QualiSystems/cloudshell-core?branch=dev)
 [![PyPI version](https://badge.fury.io/py/cloudshell-core.svg)](https://badge.fury.io/py/cloudshell-core)
 [![Dependency Status](https://dependencyci.com/github/QualiSystems/cloudshell-core/badge)](https://dependencyci.com/github/QualiSystems/cloudshell-core)
-[![Stories in Ready](https://badge.waffle.io/QualiSystems/cloudshell-core.svg?label=ready&title=Ready)](http://waffle.io/QualiSystems/cloudshell-core)
 
 <p align="center">
 <img src="https://github.com/QualiSystems/devguide_source/raw/master/logo.png"></img>
