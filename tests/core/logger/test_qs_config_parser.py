@@ -6,6 +6,7 @@ Tests for cloudshell.core.logger.qs_config_parser
 
 import os
 from unittest import TestCase
+
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 
 CUR_DIR = os.path.dirname(__file__)

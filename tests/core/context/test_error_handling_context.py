@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mock import Mock, MagicMock
+from mock import MagicMock, Mock
 
 from cloudshell.core.context.error_handling_context import ErrorHandlingContext
 
@@ -32,4 +32,3 @@ class TestErrorHandlingContext(TestCase):
 
         # Assert
         logger.error.assert_not_called()
-

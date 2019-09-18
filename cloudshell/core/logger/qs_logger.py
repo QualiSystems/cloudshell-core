@@ -1,13 +1,15 @@
 #!/usr/bin/python
-import sys
 import logging
-from datetime import datetime
-from logging import StreamHandler
-import threading
-import traceback
-
 import os
 import re
+import sys
+import threading
+import time
+import traceback
+from datetime import datetime
+from functools import wraps
+from logging import StreamHandler
+
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 from cloudshell.core.logger.qs_config_parser import QSConfigParser
 
@@ -235,8 +237,6 @@ def _create_logger(log_group, log_category, log_file_prefix):
     return logger
 
 
-import time
-from functools import wraps
 
 
 def qs_time_this(func):
