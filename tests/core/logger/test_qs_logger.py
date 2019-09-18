@@ -13,7 +13,7 @@ import sys
 from cloudshell.core.logger import qs_logger
 from cloudshell.core.logger.interprocess_logger import MultiProcessingLog
 
-if (sys.version_info >= (3,0)):
+if sys.version_info >= (3, 0):
     from unittest.mock import MagicMock
     from unittest import TestCase, mock
 else:
@@ -22,21 +22,32 @@ else:
     from unittest import TestCase
 
 
-
 CUR_DIR = os.path.dirname(__file__)
-full_settings = MagicMock(return_value={'LOG_PATH': '../../Logs',
-                                        'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
-                                        'LOG_LEVEL': 'INFO',
-                                        'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'})
+full_settings = MagicMock(
+    return_value={
+        "LOG_PATH": "../../Logs",
+        "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
+        "LOG_LEVEL": "INFO",
+        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+    }
+)
 
-cut_settings = MagicMock(return_value={'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
-                                       'LOG_LEVEL': 'INFO',
-                                       'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'})
+cut_settings = MagicMock(
+    return_value={
+        "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
+        "LOG_LEVEL": "INFO",
+        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+    }
+)
 
-wrong_settings = MagicMock(return_value={'LOG_PATH': None,
-                                         'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
-                                         'LOG_LEVEL': 'INFO',
-                                         'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'})
+wrong_settings = MagicMock(
+    return_value={
+        "LOG_PATH": None,
+        "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
+        "LOG_LEVEL": "INFO",
+        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+    }
+)
 
 
 class TestQSLogger(TestCase):
@@ -59,12 +70,12 @@ class TestQSLogger(TestCase):
         if self.qs_conf:
             os.environ["QS_CONFIG"] = self.qs_conf
         elif "QS_CONFIG" in os.environ:
-                del os.environ["QS_CONFIG"]
+            del os.environ["QS_CONFIG"]
 
         if self.log_path:
             os.putenv("LOG_PATH", self.log_path)
         elif "LOG_PATH" in os.environ:
-                del os.environ["LOG_PATH"]
+            del os.environ["LOG_PATH"]
 
         for logger in qs_logger._LOGGER_CONTAINER.values():
             for handler in logger.handlers:
@@ -74,12 +85,14 @@ class TestQSLogger(TestCase):
 
     def test_get_settings(self):
         """ Test suite for get_settings method """
-        exp_response = {'WINDOWS_LOG_PATH': r'{ALLUSERSPROFILE}\QualiSystems\logs',
-                        'UNIX_LOG_PATH': '/var/log/qualisystems',
-                        'DEFAULT_LOG_PATH': '../../Logs',
-                        'TIME_FORMAT': '%d-%b-%Y--%H-%M-%S',
-                        'LOG_LEVEL': 'INFO',
-                        'FORMAT': '%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s'}
+        exp_response = {
+            "WINDOWS_LOG_PATH": r"{ALLUSERSPROFILE}\QualiSystems\logs",
+            "UNIX_LOG_PATH": "/var/log/qualisystems",
+            "DEFAULT_LOG_PATH": "../../Logs",
+            "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
+            "LOG_LEVEL": "INFO",
+            "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+        }
 
         self.assertEqual(qs_logger.get_settings(), exp_response)
 
@@ -88,7 +101,7 @@ class TestQSLogger(TestCase):
         """Check that method will primarily return log path from the environment variable if such exists"""
         config = {}
         expected_path = MagicMock()
-        os.environ = {'LOG_PATH': expected_path}
+        os.environ = {"LOG_PATH": expected_path}
         # act
         result = qs_logger._get_log_path_config(config=config)
         # verify
@@ -120,7 +133,10 @@ class TestQSLogger(TestCase):
     def test_get_accessible_log_path_default_params(self):
         """ Test suite for get_accessible_log_path method """
         path = qs_logger.get_accessible_log_path()
-        self.assertRegexpMatches(path, r"Logs[\\/]Autoload[\\/](.*[\\/])?default--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log")
+        self.assertRegexpMatches(
+            path,
+            r"Logs[\\/]Autoload[\\/](.*[\\/])?default--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log",
+        )
         self.assertTrue(os.path.dirname(path))
 
     def test_get_accessible_log_path_path_creation(self):
@@ -132,8 +148,11 @@ class TestQSLogger(TestCase):
     def test_get_accessible_log_path(self):
         """ Test suite for get_accessible_log_path method """
         path = qs_logger.get_accessible_log_path("reservation_id", "handler_name")
-        self.assertRegexpMatches(path, r"Logs[\\/]reservation_id[\\/](.*[\\/])?"
-                                       r"handler_name--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log")
+        self.assertRegexpMatches(
+            path,
+            r"Logs[\\/]reservation_id[\\/](.*[\\/])?"
+            r"handler_name--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log",
+        )
 
     def test_get_accessible_log_path_log_path_setting_missing(self):
         """ Test suite for get_accessible_log_path method """
@@ -155,13 +174,20 @@ class TestQSLogger(TestCase):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
-        self.assertTrue(isinstance(qs_logger.get_qs_logger().handlers[0], MultiProcessingLog))
+        self.assertTrue(
+            isinstance(qs_logger.get_qs_logger().handlers[0], MultiProcessingLog)
+        )
 
     def test_get_qs_logger_full_settings(self):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
-        self.assertTrue(isinstance(qs_logger.get_qs_logger(log_group='test1').handlers[0], MultiProcessingLog))
+        self.assertTrue(
+            isinstance(
+                qs_logger.get_qs_logger(log_group="test1").handlers[0],
+                MultiProcessingLog,
+            )
+        )
 
     def test_get_qs_logger_stream_handler(self):
         """ Test suite for get_qs_logger method """
@@ -169,31 +195,46 @@ class TestQSLogger(TestCase):
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = cut_settings
-        self.assertTrue(isinstance(qs_logger.get_qs_logger(log_group='test2').handlers[0], logging.StreamHandler))
+        self.assertTrue(
+            isinstance(
+                qs_logger.get_qs_logger(log_group="test2").handlers[0],
+                logging.StreamHandler,
+            )
+        )
 
     def test_get_qs_logger_container_filling(self):
         """ Test suite for get_qs_logger method """
 
         qs_logger.get_settings = full_settings
         qs_logger.get_qs_logger()
-        qs_logger.get_qs_logger(log_group='test1')
+        qs_logger.get_qs_logger(log_group="test1")
 
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = cut_settings
-        qs_logger.get_qs_logger(log_group='test2')
+        qs_logger.get_qs_logger(log_group="test2")
 
-        self.assertEqual(sorted(qs_logger._LOGGER_CONTAINER.keys()), sorted(["Ungrouped", "test1", "test2"]))
+        self.assertEqual(
+            sorted(qs_logger._LOGGER_CONTAINER.keys()),
+            sorted(["Ungrouped", "test1", "test2"]),
+        )
 
     def test_normalize_buffer_decolorize(self):
         """ Test suite for normalize_buffer method """
-        self.assertEqual(qs_logger.normalize_buffer("\033[1;32;40mGreenOnWhiteBack "
-                                                    "\033[4;31mRedUnderscore "
-                                                    "\033[93mYellow"), "GreenOnWhiteBack RedUnderscore Yellow")
+        self.assertEqual(
+            qs_logger.normalize_buffer(
+                "\033[1;32;40mGreenOnWhiteBack "
+                "\033[4;31mRedUnderscore "
+                "\033[93mYellow"
+            ),
+            "GreenOnWhiteBack RedUnderscore Yellow",
+        )
 
     def test_normalize_buffer_remove_hex_symbols(self):
         """ Test suite for normalize_buffer method """
-        self.assertEqual(qs_logger.normalize_buffer("\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff"), "---")
+        self.assertEqual(
+            qs_logger.normalize_buffer("\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff"), "---"
+        )
 
     def test_normalize_buffer_carriage_return_replacing(self):
         """ Test suite for normalize_buffer method """
@@ -201,8 +242,12 @@ class TestQSLogger(TestCase):
 
     def test_normalize_buffer_converts_tuple_to_string(self):
         """ Test suite for normalize_buffer method """
-        self.assertEqual(qs_logger.normalize_buffer(("test", "tuple")), "('test', 'tuple')")
+        self.assertEqual(
+            qs_logger.normalize_buffer(("test", "tuple")), "('test', 'tuple')"
+        )
 
     def test_normalize_buffer_converts_dict_to_string(self):
         """ Test suite for normalize_buffer method """
-        self.assertEqual(qs_logger.normalize_buffer({"test": "dict"}), "{'test': 'dict'}")
+        self.assertEqual(
+            qs_logger.normalize_buffer({"test": "dict"}), "{'test': 'dict'}"
+        )

@@ -4,9 +4,9 @@
 import os
 import sys
 
-DEFAULT_CONFIG_PATH = 'qs_config.ini'
+DEFAULT_CONFIG_PATH = "qs_config.ini"
 
-if (sys.version_info >= (3,0)):
+if sys.version_info >= (3, 0):
     import configparser as ConfigParser
 else:
     import ConfigParser
@@ -20,7 +20,9 @@ class QSConfigParser:
 
         file_path = os.path.dirname(__file__)
 
-        self._config_file = os.getenv('QS_CONFIG', os.path.join(file_path, DEFAULT_CONFIG_PATH))
+        self._config_file = os.getenv(
+            "QS_CONFIG", os.path.join(file_path, DEFAULT_CONFIG_PATH)
+        )
         self._read_config_file()
         self._create_dict()
 

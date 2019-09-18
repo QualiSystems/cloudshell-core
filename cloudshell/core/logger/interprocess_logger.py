@@ -7,7 +7,7 @@ from logging.handlers import RotatingFileHandler
 
 
 class MultiProcessingLog(logging.Handler):
-    def __init__(self, name, mode='a', maxsize=0, rotate=0):
+    def __init__(self, name, mode="a", maxsize=0, rotate=0):
         logging.Handler.__init__(self)
 
         self._handler = RotatingFileHandler(name, mode, maxsize, rotate)
