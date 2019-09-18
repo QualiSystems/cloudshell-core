@@ -1,12 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""
-Tests for cloudshell.core.logger.qs_logger
-"""
+"""Tests for cloudshell.core.logger.qs_logger."""
 
 import logging
 import os
-import re
 import shutil
 import sys
 
@@ -28,7 +25,10 @@ full_settings = MagicMock(
         "LOG_PATH": "../../Logs",
         "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
         "LOG_LEVEL": "INFO",
-        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+        "FORMAT": (
+            "%(asctime)s [%(levelname)s]: %(name)s %(module)s - "
+            "%(funcName)-20s %(message)s"
+        ),
     }
 )
 
@@ -36,7 +36,10 @@ cut_settings = MagicMock(
     return_value={
         "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
         "LOG_LEVEL": "INFO",
-        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+        "FORMAT": (
+            "%(asctime)s [%(levelname)s]: %(name)s %(module)s - "
+            "%(funcName)-20s %(message)s"
+        ),
     }
 )
 
@@ -45,7 +48,10 @@ wrong_settings = MagicMock(
         "LOG_PATH": None,
         "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
         "LOG_LEVEL": "INFO",
-        "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+        "FORMAT": (
+            "%(asctime)s [%(levelname)s]: %(name)s %(module)s - "
+            "%(funcName)-20s %(message)s"
+        ),
     }
 )
 
@@ -54,7 +60,7 @@ class TestQSLogger(TestCase):
     _LOGS_PATH = os.path.join(os.path.dirname(__file__), "../../Logs")
 
     def setUp(self):
-        """ Remove all existing test Logs folders before each suite """
+        """Remove all existing test Logs folders before each suite."""
         self.get_settings = qs_logger.get_settings
         self.qs_conf = os.getenv("QS_CONFIG")
         self.log_path = os.getenv("LOG_PATH")
@@ -66,7 +72,7 @@ class TestQSLogger(TestCase):
             shutil.rmtree(self._LOGS_PATH)
 
     def tearDown(self):
-        """ Close all existing logging handlers after each suite """
+        """Close all existing logging handlers after each suite."""
         if self.qs_conf:
             os.environ["QS_CONFIG"] = self.qs_conf
         elif "QS_CONFIG" in os.environ:
@@ -84,21 +90,24 @@ class TestQSLogger(TestCase):
         qs_logger.get_settings = self.get_settings
 
     def test_get_settings(self):
-        """ Test suite for get_settings method """
+        """Test suite for get_settings method."""
         exp_response = {
             "WINDOWS_LOG_PATH": r"{ALLUSERSPROFILE}\QualiSystems\logs",
             "UNIX_LOG_PATH": "/var/log/qualisystems",
             "DEFAULT_LOG_PATH": "../../Logs",
             "TIME_FORMAT": "%d-%b-%Y--%H-%M-%S",
             "LOG_LEVEL": "INFO",
-            "FORMAT": "%(asctime)s [%(levelname)s]: %(name)s %(module)s - %(funcName)-20s %(message)s",
+            "FORMAT": (
+                "%(asctime)s [%(levelname)s]: %(name)s %(module)s - "
+                "%(funcName)-20s %(message)s"
+            ),
         }
 
         self.assertEqual(qs_logger.get_settings(), exp_response)
 
     @mock.patch("cloudshell.core.logger.qs_logger.os")
     def test_get_log_path_config_from_environment_variable(self, os):
-        """Check that method will primarily return log path from the environment variable if such exists"""
+        """Check method returned primarily log path from the env var if such exists."""
         config = {}
         expected_path = MagicMock()
         os.environ = {"LOG_PATH": expected_path}
@@ -109,7 +118,7 @@ class TestQSLogger(TestCase):
 
     @mock.patch("cloudshell.core.logger.qs_logger.os")
     def test_get_log_path_config_for_windows_os(self, os):
-        """Check that method will return windows log path setting with substituted environment variables"""
+        """Check method returned windows log path setting with substituted env vars."""
         os.name = qs_logger.WINDOWS_OS_FAMILY
         os.environ = {"SOME_EN_VARIABLE": "C:\\some_path"}
         expected_path = "{SOME_EN_VARIABLE}\\qualisystems\\logs\\commands"
@@ -121,7 +130,7 @@ class TestQSLogger(TestCase):
 
     @mock.patch("cloudshell.core.logger.qs_logger.os")
     def test_get_log_path_config_for_unix_os(self, os):
-        """Check that method will return unix log path setting for posix OS"""
+        """Check that method will return unix log path setting for posix OS."""
         os.name = "posix"
         expected_path = MagicMock()
         config = {"UNIX_LOG_PATH": expected_path}
@@ -131,22 +140,22 @@ class TestQSLogger(TestCase):
         self.assertEqual(result, expected_path)
 
     def test_get_accessible_log_path_default_params(self):
-        """ Test suite for get_accessible_log_path method """
+        """Test suite for get_accessible_log_path method."""
         path = qs_logger.get_accessible_log_path()
         self.assertRegexpMatches(
             path,
-            r"Logs[\\/]Autoload[\\/](.*[\\/])?default--\d{2}-\w+-\d{4}--\d{2}-\d{2}-\d{2}\.log",
+            r"Logs[\\/]Autoload[\\/](.*[\\/])?default--\d{2}-\w+-\d{4}--"
+            r"\d{2}-\d{2}-\d{2}\.log",
         )
         self.assertTrue(os.path.dirname(path))
 
     def test_get_accessible_log_path_path_creation(self):
-        """ Test suite for get_accessible_log_path method """
-
+        """Test suite for get_accessible_log_path method."""
         path = qs_logger.get_accessible_log_path()
         self.assertTrue(os.path.dirname(path))
 
     def test_get_accessible_log_path(self):
-        """ Test suite for get_accessible_log_path method """
+        """Test suite for get_accessible_log_path method."""
         path = qs_logger.get_accessible_log_path("reservation_id", "handler_name")
         self.assertRegexpMatches(
             path,
@@ -155,32 +164,28 @@ class TestQSLogger(TestCase):
         )
 
     def test_get_accessible_log_path_log_path_setting_missing(self):
-        """ Test suite for get_accessible_log_path method """
-
+        """Test suite for get_accessible_log_path method."""
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = cut_settings
         self.assertIsNone(qs_logger.get_accessible_log_path())
 
     def test_get_accessible_log_path_log_path_is_none(self):
-        """ Test suite for get_accessible_log_path method """
-
+        """Test suite for get_accessible_log_path method."""
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = wrong_settings
         self.assertIsNone(qs_logger.get_accessible_log_path())
 
     def test_get_qs_logger_full_settings_default_params(self):
-        """ Test suite for get_qs_logger method """
-
+        """Test suite for get_qs_logger method."""
         qs_logger.get_settings = full_settings
         self.assertTrue(
             isinstance(qs_logger.get_qs_logger().handlers[0], MultiProcessingLog)
         )
 
     def test_get_qs_logger_full_settings(self):
-        """ Test suite for get_qs_logger method """
-
+        """Test suite for get_qs_logger method."""
         qs_logger.get_settings = full_settings
         self.assertTrue(
             isinstance(
@@ -190,8 +195,7 @@ class TestQSLogger(TestCase):
         )
 
     def test_get_qs_logger_stream_handler(self):
-        """ Test suite for get_qs_logger method """
-
+        """Test suite for get_qs_logger method."""
         if "LOG_PATH" in os.environ:
             del os.environ["LOG_PATH"]
         qs_logger.get_settings = cut_settings
@@ -203,8 +207,7 @@ class TestQSLogger(TestCase):
         )
 
     def test_get_qs_logger_container_filling(self):
-        """ Test suite for get_qs_logger method """
-
+        """Test suite for get_qs_logger method."""
         qs_logger.get_settings = full_settings
         qs_logger.get_qs_logger()
         qs_logger.get_qs_logger(log_group="test1")
@@ -220,7 +223,7 @@ class TestQSLogger(TestCase):
         )
 
     def test_normalize_buffer_decolorize(self):
-        """ Test suite for normalize_buffer method """
+        """Test suite for normalize_buffer method."""
         self.assertEqual(
             qs_logger.normalize_buffer(
                 "\033[1;32;40mGreenOnWhiteBack "
@@ -231,23 +234,23 @@ class TestQSLogger(TestCase):
         )
 
     def test_normalize_buffer_remove_hex_symbols(self):
-        """ Test suite for normalize_buffer method """
+        """Test suite for normalize_buffer method."""
         self.assertEqual(
             qs_logger.normalize_buffer("\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff"), "---"
         )
 
     def test_normalize_buffer_carriage_return_replacing(self):
-        """ Test suite for normalize_buffer method """
+        """Test suite for normalize_buffer method."""
         self.assertEqual(qs_logger.normalize_buffer("\r\n \n\r"), "\n \n\r")
 
     def test_normalize_buffer_converts_tuple_to_string(self):
-        """ Test suite for normalize_buffer method """
+        """Test suite for normalize_buffer method."""
         self.assertEqual(
             qs_logger.normalize_buffer(("test", "tuple")), "('test', 'tuple')"
         )
 
     def test_normalize_buffer_converts_dict_to_string(self):
-        """ Test suite for normalize_buffer method """
+        """Test suite for normalize_buffer method."""
         self.assertEqual(
             qs_logger.normalize_buffer({"test": "dict"}), "{'test': 'dict'}"
         )

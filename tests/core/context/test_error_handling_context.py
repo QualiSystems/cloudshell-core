@@ -27,7 +27,7 @@ class TestErrorHandlingContext(TestCase):
 
         # Act
         with ErrorHandlingContext(logger=logger):
-            print("hello world")
+            pass
 
         # Assert
         logger.error.assert_not_called()

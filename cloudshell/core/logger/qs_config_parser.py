@@ -28,9 +28,8 @@ class QSConfigParser:
 
     def _read_config_file(self):
         try:
-            # print('Reading config', self._config_file)
             self._config_parser.read(self._config_file)
-        except:
+        except Exception:
             pass
 
     def _create_dict(self):

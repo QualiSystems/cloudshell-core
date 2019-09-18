@@ -1,5 +1,4 @@
 import os
-import sys
 
 from setuptools import find_packages, setup
 
@@ -25,8 +24,9 @@ setup(
     ),
     license="Apache 2.0",
     version=version_from_file,
-    description="Core package for CloudShell Python orchestration and automation. This package contains common"
-    "code for CloudShell packages, including logging, basic interfaces and other utilities",
+    description="Core package for CloudShell Python orchestration and automation. "
+    "This package contains common code for CloudShell packages, "
+    "including logging, basic interfaces and other utilities",
     include_package_data=True,
     keywords="sandbox cloud cmp cloudshell",
     classifiers=[
