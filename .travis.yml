@@ -1,21 +1,30 @@
 language: python
-python:
-- '2.7'
 
-before_install:
-    - pip install -r test_requirements.txt -i https://testpypi.python.org/pypi
-    - pip install coveralls
+jobs:
+  include:
+    - if: branch = master
+      python: 2.7
+      env: TOXENV=py27-master
+      after_success: codecov
+    - if: branch = master
+      python: 3.7
+      env: TOXENV=py37-master
+      after_success: codecov
+    - if: branch != master
+      python: 2.7
+      env: TOXENV=py27-dev
+      after_success: codecov
+    - if: branch != master
+      python: 3.7
+      env: TOXENV=py37-dev
+      after_success: codecov
+    - env: TOXENV=build
+      python: 2.7
+    - env: TOXENV=pre-commit
+      python: 3.7
 
 install:
-    - pip install -r requirements.txt -i https://testpypi.python.org/pypi
-    - python setup.py install
+  - pip install tox
+  - pip install codecov
 
-script:
-    - python setup.py develop
-    - python setup.py test
-    - python setup.py sdist --format zip
-    - nosetests --with-coverage --cover-package=cloudshell
-    - pip install cloudshell-core -f dist
-
-after_success:
-    - coveralls
+script: tox
